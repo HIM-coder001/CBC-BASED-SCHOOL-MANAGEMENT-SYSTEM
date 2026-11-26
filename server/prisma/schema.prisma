@@ -1,0 +1,731 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// ── Multi-tenant ──────────────────────────────────────────────────────────
+
+model School {
+  id        Int      @id @default(autoincrement())
+  name      String
+  subdomain String?  @unique
+  county    String?
+  phone     String?
+  email     String?
+  logoUrl   String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  users     User[]
+  students  Student[]
+  teachers  Teacher[]
+  classes   Class[]
+  settings  SchoolSettings[]
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  fullName  String
+  email     String   @unique
+  password  String
+  role      Role
+  schoolId  Int      @default(1)
+  school    School   @relation(fields: [schoolId], references: [id])
+
+  passwordResetToken   String?
+  passwordResetExpires DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  student          Student?
+  teacher          Teacher?
+  parent           Parent?
+  sentMessages     Message[]         @relation("SentMessages")
+  receivedMessages Message[]         @relation("ReceivedMessages")
+  skillAssessments SkillAssessment[]
+  recordedPayments FeePayment[]      @relation("RecordedPayments")
+  auditLogs        AuditLog[]
+  importJobs       ImportJob[]
+}
+
+model Student {
+  id          Int      @id @default(autoincrement())
+  admissionNo String   @unique
+  fullName    String
+  gender      String
+  dob         DateTime
+  nemisUpi    String?
+
+  schoolId Int    @default(1)
+  school   School @relation(fields: [schoolId], references: [id])
+
+  userId Int? @unique
+  user   User? @relation(fields: [userId], references: [id])
+
+  classId Int?
+  class   Class? @relation(fields: [classId], references: [id])
+
+  parentId Int?
+  parent   Parent? @relation(fields: [parentId], references: [id])
+
+  assessments      Assessment[]
+  reportCards      ReportCard[]
+  attendances      Attendance[]
+  assignments      StudentAssignment[]
+  competencies     Competency[]
+  skillAssessments SkillAssessment[]
+  learnerProfiles  LearnerProfile[]
+  feePayments      FeePayment[]
+  feeInvoices      FeeInvoice[]
+  disciplineRecords DisciplineRecord[]
+  studentRoutes    StudentRoute[]
+  bookLoans        BookLoan[]
+  examResults      ExamResult[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model Teacher {
+  id       Int    @id @default(autoincrement())
+  tscNo    String @unique
+  fullName String
+  email    String @unique
+  phone    String
+  subject  String
+  nemisUpi String?
+
+  schoolId Int    @default(1)
+  school   School @relation(fields: [schoolId], references: [id])
+
+  userId Int  @unique
+  user   User @relation(fields: [userId], references: [id])
+
+  classId Int?
+  class   Class? @relation(fields: [classId], references: [id])
+
+  assignments      Assignment[]
+  timetableSlots   TimetableSlot[]
+  tpadSubmissions  TpadSubmission[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model Class {
+  id     Int    @id @default(autoincrement())
+  name   String
+  grade  String
+  stream String
+
+  schoolId Int    @default(1)
+  school   School @relation(fields: [schoolId], references: [id])
+
+  students    Student[]
+  teachers    Teacher[]
+  assignments Assignment[] @relation("ClassAssignments")
+  timetableSlots TimetableSlot[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model LearningArea {
+  id     Int    @id @default(autoincrement())
+  name   String
+  grade  String
+
+  strands      Strand[]
+  competencies Competency[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model Strand {
+  id             Int          @id @default(autoincrement())
+  name           String
+  learningAreaId Int
+  learningArea   LearningArea @relation(fields: [learningAreaId], references: [id])
+  subStrands     SubStrand[]
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @default(now()) @updatedAt
+}
+
+model SubStrand {
+  id       Int    @id @default(autoincrement())
+  name     String
+  strandId Int
+  strand   Strand @relation(fields: [strandId], references: [id])
+  assessments Assessment[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model Assessment {
+  id             Int             @id @default(autoincrement())
+  studentId      Int
+  student        Student         @relation(fields: [studentId], references: [id])
+  subStrandId    Int
+  subStrand      SubStrand       @relation(fields: [subStrandId], references: [id])
+  score          String
+  term           String
+  assessmentType AssessmentType?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @default(now()) @updatedAt
+}
+
+model ReportCard {
+  id                    Int     @id @default(autoincrement())
+  studentId             Int
+  student               Student @relation(fields: [studentId], references: [id])
+  term                  String
+  year                  String
+  overallGrade          String
+  remark                String
+  strengths             String?
+  nextSteps             String?
+  learnerProfileSummary String?
+  teacherRemark         String?
+  principalRemark       String?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @default(now()) @updatedAt
+}
+
+model Parent {
+  id         Int     @id @default(autoincrement())
+  fullName   String
+  email      String  @unique
+  phone      String
+  occupation String?
+  userId     Int     @unique
+  user       User    @relation(fields: [userId], references: [id])
+  students   Student[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
+}
+
+model Attendance {
+  id        Int              @id @default(autoincrement())
+  studentId Int
+  student   Student          @relation(fields: [studentId], references: [id])
+  date      DateTime
+  status    AttendanceStatus @default(PRESENT)
+  remarks   String?
+  term      String
+  year      Int
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @default(now()) @updatedAt
+
+  @@unique([studentId, date])
+}
+
+model Assignment {
+  id          Int    @id @default(autoincrement())
+  title       String
+  description String @db.LongText
+  dueDate     DateTime
+  term        String
+  teacherId   Int
+  teacher     Teacher @relation(fields: [teacherId], references: [id])
+  classId     Int
+  class       Class  @relation("ClassAssignments", fields: [classId], references: [id])
+  students    StudentAssignment[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
+}
+
+model StudentAssignment {
+  id            Int       @id @default(autoincrement())
+  submitted     Boolean   @default(false)
+  submittedAt   DateTime?
+  grade         String?
+  feedback      String?
+  submission    String?   @db.LongText
+  submissionUrl String?
+  studentId     Int
+  student       Student   @relation(fields: [studentId], references: [id])
+  assignmentId  Int
+  assignment    Assignment @relation(fields: [assignmentId], references: [id])
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @default(now()) @updatedAt
+
+  @@unique([studentId, assignmentId])
+}
+
+model Message {
+  id          Int         @id @default(autoincrement())
+  subject     String
+  content     String      @db.LongText
+  isRead      Boolean     @default(false)
+  readAt      DateTime?
+  senderId    Int
+  sender      User        @relation("SentMessages", fields: [senderId], references: [id])
+  recipientId Int
+  recipient   User        @relation("ReceivedMessages", fields: [recipientId], references: [id])
+  messageType MessageType @default(GENERAL)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @default(now()) @updatedAt
+}
+
+model Competency {
+  id             Int            @id @default(autoincrement())
+  code           String
+  name           String
+  description    String         @db.LongText
+  grade          String
+  learningAreaId Int
+  learningArea   LearningArea   @relation(fields: [learningAreaId], references: [id])
+  studentId      Int
+  student        Student        @relation(fields: [studentId], references: [id])
+  skillAssessments SkillAssessment[]
+  level          CompetencyLevel @default(DEVELOPING)
+  evidence       String?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @default(now()) @updatedAt
+
+  @@unique([studentId, code])
+}
+
+model SkillAssessment {
+  id           Int        @id @default(autoincrement())
+  skillName    String
+  level        SkillLevel @default(DEVELOPING)
+  evidence     String     @db.LongText
+  term         String
+  year         Int
+  studentId    Int
+  student      Student    @relation(fields: [studentId], references: [id])
+  competencyId Int
+  competency   Competency @relation(fields: [competencyId], references: [id])
+  teacherId    Int
+  teacher      User       @relation(fields: [teacherId], references: [id])
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @default(now()) @updatedAt
+}
+
+model LearnerProfile {
+  id        Int                    @id @default(autoincrement())
+  studentId Int
+  student   Student                @relation(fields: [studentId], references: [id])
+  term      String
+  year      String
+  category  LearnerProfileCategory
+  level     LearnerProfileLevel
+  comments  String?                @db.LongText
+  createdAt DateTime               @default(now())
+  updatedAt DateTime               @default(now()) @updatedAt
+
+  @@unique([studentId, term, year, category])
+}
+
+// ── Fees ──────────────────────────────────────────────────────────────────
+
+model FeeStructure {
+  id          Int    @id @default(autoincrement())
+  grade       String
+  term        String
+  year        Int
+  amount      Float
+  description String?
+  payments    FeePayment[]
+  invoices    FeeInvoice[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
+
+  @@unique([grade, term, year])
+}
+
+model FeePayment {
+  id             Int           @id @default(autoincrement())
+  amount         Float
+  paymentDate    DateTime      @default(now())
+  method         PaymentMethod @default(MPESA)
+  mpesaRef       String?
+  mpesaPhone     String?
+  notes          String?
+  term           String
+  year           Int
+  status         PaymentStatus @default(PENDING)
+  studentId      Int
+  student        Student       @relation(fields: [studentId], references: [id])
+  feeStructureId Int?
+  feeStructure   FeeStructure? @relation(fields: [feeStructureId], references: [id])
+  invoiceId      Int?
+  invoice        FeeInvoice?   @relation(fields: [invoiceId], references: [id])
+  recordedById   Int?
+  recordedBy     User?         @relation("RecordedPayments", fields: [recordedById], references: [id])
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @default(now()) @updatedAt
+}
+
+model FeeInvoice {
+  id             Int           @id @default(autoincrement())
+  studentId      Int
+  student        Student       @relation(fields: [studentId], references: [id])
+  feeStructureId Int?
+  feeStructure   FeeStructure? @relation(fields: [feeStructureId], references: [id])
+  term           String
+  year           Int
+  amountDue      Float
+  amountPaid     Float         @default(0)
+  status         InvoiceStatus @default(UNPAID)
+  payments       FeePayment[]
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @default(now()) @updatedAt
+
+  @@unique([studentId, term, year])
+}
+
+model MpesaTransaction {
+  id               Int      @id @default(autoincrement())
+  transId          String?  @unique
+  amount           Float
+  phone            String?
+  billRefNumber    String?
+  transTime        String?
+  matchedPaymentId Int?
+  rawPayload       Json?
+  createdAt        DateTime @default(now())
+}
+
+model SchoolSettings {
+  id                    Int     @id @default(autoincrement())
+  schoolId              Int     @default(1)
+  school                School  @relation(fields: [schoolId], references: [id])
+  schoolName            String  @default("SchoolHub CBC Academy")
+  address               String?
+  phone                 String?
+  email                 String?
+  motto                 String?
+  county                String?
+  logoUrl               String?
+  smsEnabled            Boolean @default(false)
+  smsAbsenceAlerts      Boolean @default(true)
+  smsFeeReminders       Boolean @default(true)
+  smsReportCardAlerts   Boolean @default(false)
+  emailEnabled          Boolean @default(false)
+  updatedAt             DateTime @default(now()) @updatedAt
+}
+
+// ── Academic calendar ─────────────────────────────────────────────────────
+
+model AcademicYear {
+  id        Int      @id @default(autoincrement())
+  year      Int      @unique
+  isCurrent Boolean  @default(false)
+  terms     Term[]
+  createdAt DateTime @default(now())
+}
+
+model Term {
+  id             Int          @id @default(autoincrement())
+  name           String
+  startDate      DateTime
+  endDate        DateTime
+  isLocked       Boolean      @default(false)
+  academicYearId Int
+  academicYear   AcademicYear @relation(fields: [academicYearId], references: [id])
+  createdAt      DateTime     @default(now())
+}
+
+// ── Operations ────────────────────────────────────────────────────────────
+
+model Subject {
+  id             Int             @id @default(autoincrement())
+  name           String
+  code           String?
+  grade          String?
+  timetableSlots TimetableSlot[]
+  createdAt      DateTime        @default(now())
+}
+
+model TimetableSlot {
+  id        Int     @id @default(autoincrement())
+  dayOfWeek Int
+  period    Int
+  room      String?
+  classId   Int
+  class     Class   @relation(fields: [classId], references: [id])
+  teacherId Int
+  teacher   Teacher @relation(fields: [teacherId], references: [id])
+  subjectId Int
+  subject   Subject @relation(fields: [subjectId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([classId, dayOfWeek, period])
+}
+
+model Route {
+  id        Int            @id @default(autoincrement())
+  name      String
+  zone      String?
+  fee       Float          @default(0)
+  vehicleId Int?
+  vehicle   Vehicle?       @relation(fields: [vehicleId], references: [id])
+  students  StudentRoute[]
+  createdAt DateTime       @default(now())
+}
+
+model Vehicle {
+  id           Int     @id @default(autoincrement())
+  plateNumber  String  @unique
+  capacity     Int?
+  driverId     Int?
+  driver       Driver? @relation(fields: [driverId], references: [id])
+  routes       Route[]
+  createdAt    DateTime @default(now())
+}
+
+model Driver {
+  id        Int       @id @default(autoincrement())
+  fullName  String
+  phone     String
+  licenseNo String?
+  vehicles  Vehicle[]
+  createdAt DateTime  @default(now())
+}
+
+model StudentRoute {
+  id        Int     @id @default(autoincrement())
+  studentId Int
+  student   Student @relation(fields: [studentId], references: [id])
+  routeId   Int
+  route     Route   @relation(fields: [routeId], references: [id])
+  pickupPoint String?
+  createdAt DateTime @default(now())
+
+  @@unique([studentId])
+}
+
+model DisciplineRecord {
+  id          Int      @id @default(autoincrement())
+  studentId   Int
+  student     Student  @relation(fields: [studentId], references: [id])
+  incident    String   @db.LongText
+  action      String?
+  severity    String   @default("MINOR")
+  date        DateTime @default(now())
+  recordedById Int?
+  createdAt   DateTime @default(now())
+}
+
+model SchoolEvent {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?  @db.LongText
+  startDate   DateTime
+  endDate     DateTime?
+  location    String?
+  createdAt   DateTime @default(now())
+}
+
+model Book {
+  id        Int        @id @default(autoincrement())
+  title     String
+  author    String?
+  isbn      String?
+  copies    Int        @default(1)
+  available Int        @default(1)
+  loans     BookLoan[]
+  createdAt DateTime   @default(now())
+}
+
+model BookLoan {
+  id         Int       @id @default(autoincrement())
+  bookId     Int
+  book       Book      @relation(fields: [bookId], references: [id])
+  studentId  Int
+  student    Student   @relation(fields: [studentId], references: [id])
+  loanedAt   DateTime  @default(now())
+  dueDate    DateTime
+  returnedAt DateTime?
+  createdAt  DateTime  @default(now())
+}
+
+// ── TPAD & KCSE ───────────────────────────────────────────────────────────
+
+model TpadSubmission {
+  id         Int      @id @default(autoincrement())
+  teacherId  Int
+  teacher    Teacher  @relation(fields: [teacherId], references: [id])
+  term       String
+  year       Int
+  status     TpadStatus @default(DRAFT)
+  data       Json
+  reviewedBy Int?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
+
+  @@unique([teacherId, term, year])
+}
+
+model ExamSession {
+  id        Int          @id @default(autoincrement())
+  name      String
+  type      ExamType     @default(MOCK)
+  year      Int
+  term      String?
+  isActive  Boolean      @default(true)
+  subjects  ExamSubject[]
+  results   ExamResult[]
+  createdAt DateTime     @default(now())
+}
+
+model ExamSubject {
+  id            Int         @id @default(autoincrement())
+  name          String
+  examSessionId Int
+  examSession   ExamSession @relation(fields: [examSessionId], references: [id])
+  results       ExamResult[]
+  createdAt     DateTime    @default(now())
+}
+
+model ExamResult {
+  id            Int         @id @default(autoincrement())
+  studentId     Int
+  student       Student     @relation(fields: [studentId], references: [id])
+  examSubjectId Int
+  examSubject   ExamSubject @relation(fields: [examSubjectId], references: [id])
+  examSessionId Int
+  examSession   ExamSession @relation(fields: [examSessionId], references: [id])
+  score         Float
+  grade         String?
+  points        Int?
+  createdAt     DateTime    @default(now())
+
+  @@unique([studentId, examSubjectId, examSessionId])
+}
+
+// ── System ────────────────────────────────────────────────────────────────
+
+model NotificationLog {
+  id        Int      @id @default(autoincrement())
+  channel   String
+  recipient String
+  template  String
+  status    String
+  payload   Json?
+  createdAt DateTime @default(now())
+}
+
+model AuditLog {
+  id        Int      @id @default(autoincrement())
+  userId    Int?
+  user      User?    @relation(fields: [userId], references: [id])
+  action    String
+  entity    String
+  entityId  Int?
+  before    Json?
+  after     Json?
+  createdAt DateTime @default(now())
+}
+
+model ImportJob {
+  id        Int      @id @default(autoincrement())
+  type      String
+  status    String   @default("PENDING")
+  errors    Json?
+  createdById Int
+  createdBy User     @relation(fields: [createdById], references: [id])
+  createdAt DateTime @default(now())
+}
+
+// ── Enums ─────────────────────────────────────────────────────────────────
+
+enum AssessmentType {
+  FORMATIVE
+  SUMMATIVE
+  PRACTICAL
+  PROJECT
+}
+
+enum LearnerProfileCategory {
+  COMMUNICATION
+  CRITICAL_THINKING
+  CREATIVITY
+  CITIZENSHIP
+  DIGITAL_LITERACY
+  SELF_MANAGEMENT
+}
+
+enum LearnerProfileLevel {
+  BEGINNING
+  DEVELOPING
+  PROFICIENT
+  ADVANCED
+  MASTERED
+}
+
+enum Role {
+  ADMIN
+  TEACHER
+  STUDENT
+  PARENT
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  EXCUSED
+}
+
+enum MessageType {
+  GENERAL
+  ANNOUNCEMENT
+  COMPLAINT
+  FEEDBACK
+  INQUIRY
+}
+
+enum CompetencyLevel {
+  DEVELOPING
+  PROFICIENT
+  ADVANCED
+  MASTERED
+}
+
+enum SkillLevel {
+  BEGINNING
+  DEVELOPING
+  PROFICIENT
+  ADVANCED
+}
+
+enum PaymentMethod {
+  MPESA
+  CASH
+  BANK
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+enum InvoiceStatus {
+  UNPAID
+  PARTIAL
+  PAID
+}
+
+enum TpadStatus {
+  DRAFT
+  SUBMITTED
+  APPROVED
+  REJECTED
+}
+
+enum ExamType {
+  MOCK
+  KCSE
+  INTERNAL
+}
