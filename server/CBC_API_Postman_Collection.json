@@ -1,0 +1,465 @@
+{
+  "info": {
+    "name": "CBC School Management System",
+    "description": "Complete API collection for CBC School Management System",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\": \"teacher@example.com\", \"password\": \"password123\"}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/auth/login",
+              "host": ["{{BASE_URL}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Create User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"fullName\": \"John Doe\", \"email\": \"john@example.com\", \"password\": \"password123\", \"role\": \"TEACHER\"}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/users",
+              "host": ["{{BASE_URL}}"],
+              "path": ["users"]
+            }
+          }
+        },
+        {
+          "name": "Get All Users",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/users",
+              "host": ["{{BASE_URL}}"],
+              "path": ["users"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Students",
+      "item": [
+        {
+          "name": "Create Student",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"admissionNo\": \"STU001\", \"fullName\": \"Jane Doe\", \"gender\": \"FEMALE\", \"dob\": \"2015-05-20\"}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/students",
+              "host": ["{{BASE_URL}}"],
+              "path": ["students"]
+            }
+          }
+        },
+        {
+          "name": "Get All Students",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/students",
+              "host": ["{{BASE_URL}}"],
+              "path": ["students"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Attendance",
+      "item": [
+        {
+          "name": "Record Attendance",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"studentId\": 1, \"date\": \"2026-05-13\", \"status\": \"PRESENT\", \"term\": \"Term 1\", \"year\": 2026}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/attendance",
+              "host": ["{{BASE_URL}}"],
+              "path": ["attendance"]
+            }
+          }
+        },
+        {
+          "name": "Get Student Attendance",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/attendance/student/1",
+              "host": ["{{BASE_URL}}"],
+              "path": ["attendance", "student", "1"]
+            }
+          }
+        },
+        {
+          "name": "Get Attendance Report",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/attendance/report?term=Term 1",
+              "host": ["{{BASE_URL}}"],
+              "path": ["attendance", "report"],
+              "query": [
+                {
+                  "key": "term",
+                  "value": "Term 1"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Assignments",
+      "item": [
+        {
+          "name": "Create Assignment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"title\": \"Chapter 5 Homework\", \"description\": \"Complete questions 1-10\", \"dueDate\": \"2026-05-20\", \"term\": \"Term 1\", \"teacherId\": 1, \"classId\": 1}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/assignments",
+              "host": ["{{BASE_URL}}"],
+              "path": ["assignments"]
+            }
+          }
+        },
+        {
+          "name": "Get All Assignments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/assignments",
+              "host": ["{{BASE_URL}}"],
+              "path": ["assignments"]
+            }
+          }
+        },
+        {
+          "name": "Submit Assignment",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/assignments/1/submit/1",
+              "host": ["{{BASE_URL}}"],
+              "path": ["assignments", "1", "submit", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Competencies",
+      "item": [
+        {
+          "name": "Create Competency",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"code\": \"COMP001\", \"name\": \"Communication\", \"description\": \"Effective communication skills\", \"grade\": \"4\", \"learningAreaId\": 1, \"studentId\": 1, \"level\": \"PROFICIENT\"}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/competencies",
+              "host": ["{{BASE_URL}}"],
+              "path": ["competencies"]
+            }
+          }
+        },
+        {
+          "name": "Get Student Competencies",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/competencies/student/1",
+              "host": ["{{BASE_URL}}"],
+              "path": ["competencies", "student", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Parent Portal",
+      "item": [
+        {
+          "name": "Create Parent",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"fullName\": \"Jane Parent\", \"email\": \"jane@example.com\", \"phone\": \"+254712345678\", \"occupation\": \"Doctor\", \"userId\": 1}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/parents",
+              "host": ["{{BASE_URL}}"],
+              "path": ["parents"]
+            }
+          }
+        },
+        {
+          "name": "Get Children Grades",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/parents/1/grades",
+              "host": ["{{BASE_URL}}"],
+              "path": ["parents", "1", "grades"]
+            }
+          }
+        },
+        {
+          "name": "Get Children Attendance",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/parents/1/attendance",
+              "host": ["{{BASE_URL}}"],
+              "path": ["parents", "1", "attendance"]
+            }
+          }
+        },
+        {
+          "name": "Send Message to Teacher",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"teacherId\": 1, \"subject\": \"Homework concern\", \"content\": \"My child is struggling with math\"}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/parents/1/messages",
+              "host": ["{{BASE_URL}}"],
+              "path": ["parents", "1", "messages"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Export Data",
+      "item": [
+        {
+          "name": "Export Grades to Excel",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/export/grades/excel",
+              "host": ["{{BASE_URL}}"],
+              "path": ["export", "grades", "excel"]
+            }
+          }
+        },
+        {
+          "name": "Export Grades to CSV",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/export/grades/csv",
+              "host": ["{{BASE_URL}}"],
+              "path": ["export", "grades", "csv"]
+            }
+          }
+        },
+        {
+          "name": "Export Report Card to PDF",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/export/report-card/1/pdf",
+              "host": ["{{BASE_URL}}"],
+              "path": ["export", "report-card", "1", "pdf"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "BASE_URL",
+      "value": "http://localhost:5000/api"
+    },
+    {
+      "key": "TOKEN",
+      "value": ""
+    }
+  ]
+}
