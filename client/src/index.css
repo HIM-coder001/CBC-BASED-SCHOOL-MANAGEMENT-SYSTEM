@@ -1,0 +1,86 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * { box-sizing: border-box; }
+  html { @apply scroll-smooth; }
+  body { @apply bg-surface-50 text-slate-800 antialiased; font-family: 'Inter', system-ui, sans-serif; }
+}
+
+@layer components {
+  /* ── Buttons ─────────────────────────────────────────────────────────── */
+  .btn {
+    @apply inline-flex items-center justify-center gap-1.5 font-semibold rounded-xl
+           transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2
+           disabled:opacity-50 disabled:cursor-not-allowed select-none whitespace-nowrap;
+  }
+  .btn-primary   { @apply btn px-3 py-2 text-sm bg-brand-600 text-white hover:bg-brand-700 focus:ring-brand-500 shadow-soft; }
+  .btn-secondary { @apply btn px-3 py-2 text-sm bg-surface-100 text-slate-700 hover:bg-surface-200 focus:ring-slate-300 border border-surface-200; }
+  .btn-danger    { @apply btn px-3 py-2 text-sm bg-red-600 text-white hover:bg-red-700 focus:ring-red-500; }
+  .btn-ghost     { @apply btn px-3 py-2 text-sm text-slate-600 hover:bg-surface-100 focus:ring-slate-300; }
+  .btn-sm        { @apply text-xs px-2.5 py-1.5; }
+  .btn-lg        { @apply text-base px-5 py-2.5; }
+
+  /* ── Cards ───────────────────────────────────────────────────────────── */
+  .card { @apply bg-white rounded-2xl border border-surface-200 shadow-soft p-4 md:p-6; }
+
+  /* ── Inputs ──────────────────────────────────────────────────────────── */
+  .input-field {
+    @apply w-full px-3 py-2 text-sm bg-white border border-surface-200 rounded-xl
+           placeholder-slate-400 text-slate-800
+           focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500
+           transition-all duration-150;
+  }
+  .input-field:disabled { @apply bg-surface-100 cursor-not-allowed text-slate-400; }
+
+  /* ── Badges ──────────────────────────────────────────────────────────── */
+  .badge         { @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold whitespace-nowrap; }
+  .badge-success { @apply bg-emerald-100 text-emerald-700; }
+  .badge-warning { @apply bg-amber-100   text-amber-700;   }
+  .badge-danger  { @apply bg-red-100     text-red-700;     }
+  .badge-info    { @apply bg-blue-100    text-blue-700;    }
+  .badge-purple  { @apply bg-purple-100  text-purple-700;  }
+  .badge-brand   { @apply bg-brand-100   text-brand-700;   }
+  .badge-gray    { @apply bg-slate-100   text-slate-600;   }
+
+  /* ── Tables ──────────────────────────────────────────────────────────── */
+  /* Always scroll horizontally — never let content overflow or wrap weirdly */
+  .table-wrapper {
+    @apply w-full overflow-x-auto rounded-xl border border-surface-200;
+    -webkit-overflow-scrolling: touch;
+  }
+  .data-table            { @apply w-full text-sm; min-width: 480px; }
+  .data-table thead      { @apply bg-surface-50 border-b border-surface-200; }
+  .data-table thead th   { @apply px-3 py-2.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap; }
+  .data-table tbody tr   { @apply border-b border-surface-100 hover:bg-surface-50 transition-colors; }
+  .data-table tbody tr:last-child { @apply border-b-0; }
+  .data-table tbody td   { @apply px-3 py-3 text-slate-700 text-sm; }
+
+  /* ── Page header ─────────────────────────────────────────────────────── */
+  .page-header {
+    @apply flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between;
+  }
+  .page-header-title   { @apply text-xl font-bold text-slate-900 leading-tight; }
+  .page-header-sub     { @apply text-sm text-slate-500 mt-0.5; }
+  .page-header-actions { @apply flex items-center gap-2 flex-wrap; }
+}
+
+@media print {
+  /* Hide interactive chrome */
+  .no-print { display: none !important; }
+
+  /* Show print-only header */
+  .print-header { display: block !important; }
+
+  /* Prevent charts from being split across pages */
+  .recharts-wrapper { page-break-inside: avoid; }
+
+  /* Ensure cards don't split */
+  .card { page-break-inside: avoid; }
+
+  /* Remove shadows and borders that look bad on paper */
+  .card { box-shadow: none !important; border: 1px solid #e2e8f0 !important; }
+}
