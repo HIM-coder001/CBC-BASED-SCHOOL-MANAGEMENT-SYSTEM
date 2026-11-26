@@ -3,3 +3,7 @@ node_modules
 /src/generated/prisma
 logs/
 *.log
+
+# Rehearsal CI environment files
+.env.rehearsal
+.rehearsal/
