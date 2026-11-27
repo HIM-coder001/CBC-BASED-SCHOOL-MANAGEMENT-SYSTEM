@@ -12,9 +12,9 @@ import {
 
 /* ── FEATURES ──────────────────────────────────────────────────────────── */
 const FEATURES = [
-  { Icon: Users,         color: 'bg-blue-100   text-blue-600',   title: 'Student Management',          desc: 'Enroll, track, and manage every learner from admission to graduation with full CBC profile support.' },
-  { Icon: Award,         color: 'bg-indigo-100 text-indigo-600', title: 'Assessments & Report Cards',  desc: 'EE/ME/AE/BE strand scoring, competency levels, and auto-generated CBC report cards with PDF export.' },
-  { Icon: BarChart3,     color: 'bg-violet-100 text-violet-600', title: 'Gradebooks & Report Cards',   desc: 'Visualize performance across strands, terms, and classes. Spot at-risk learners before they fall behind.' },
+  { Icon: Users,         color: 'bg-brand-100 text-brand-600',   title: 'Student Management',          desc: 'Enroll, track, and manage every learner from admission to graduation with full CBC profile support.' },
+  { Icon: Award,         color: 'bg-brand-100 text-brand-600', title: 'Assessments & Report Cards',  desc: 'EE/ME/AE/BE strand scoring, competency levels, and auto-generated CBC report cards with PDF export.' },
+  { Icon: BarChart3,     color: 'bg-brand-100 text-brand-600', title: 'Gradebooks & Report Cards',   desc: 'Visualize performance across strands, terms, and classes. Spot at-risk learners before they fall behind.' },
   { Icon: DollarSign,    color: 'bg-emerald-100 text-emerald-600', title: 'Fee Management & Invoicing', desc: 'Set fee structures per grade and term. M-Pesa STK Push and Paybill. Auto invoices and defaulter alerts.' },
   { Icon: CalendarCheck, color: 'bg-amber-100  text-amber-600',  title: 'Timetable & Room Scheduling', desc: 'Build conflict-free weekly timetables. Assign teachers, subjects, and rooms across all classes.' },
   { Icon: MessageSquare, color: 'bg-rose-100   text-rose-600',   title: 'Parent-Teacher Communication', desc: 'Secure in-app messaging, absence SMS alerts, and a dedicated parent portal for real-time visibility.' },
@@ -48,7 +48,7 @@ const ROLES = {
     features: ['Submit assignments via text or file upload', 'View EE/ME/AE/BE competency levels', 'Download personal CBC report cards', 'Track your attendance record by term', 'View class timetable'],
   },
   Parent: {
-    headline: 'Parent — your child, your dashboard',
+    headline: 'Parent: your child, your dashboard',
     desc: 'A dedicated portal to pay fees, track attendance, monitor grades, and message teachers directly.',
     stats: [{ label: 'Fee Balance', val: 'KES 0' }, { label: 'Attendance', val: '98%' }],
     features: ['Pay school fees via M-Pesa from your phone', 'View real-time attendance and CBC grades', 'Download report cards as PDF', 'Send messages to class teachers', 'Track assignment submission status'],
@@ -96,7 +96,7 @@ const PRICING = [
 /* ── FAQ ───────────────────────────────────────────────────────────────── */
 const FAQ = [
   { q: 'How long does it take to set up EduLink for my school?',       a: 'Most schools are live within one day. Import your existing data via Excel or fill in the guided setup. No technical skills required.' },
-  { q: 'Is EduLink aligned with Kenya\'s CBC curriculum?',              a: 'Yes — built from the ground up for CBC. All learning areas, strands, sub-strands, and EE/ME/AE/BE rubrics are pre-loaded.' },
+  { q: "Is EduLink aligned with Kenya's CBC curriculum?", a: 'Yes, built from the ground up for CBC. All learning areas, strands, sub-strands, and EE/ME/AE/BE rubrics are pre-loaded.' },
   { q: 'Can parents pay fees directly through EduLink?',                a: 'Yes. Parents pay via M-Pesa STK Push (prompt sent to their phone) or Paybill. Payments reconcile automatically with the invoicing module.' },
   { q: 'Does EduLink integrate with the NEMIS portal?',                 a: 'EduLink generates student and teacher UPI exports in the exact CSV format required by the Ministry of Education NEMIS portal.' },
   { q: 'Is EduLink Cloud delivering quality school management software?', a: 'EduLink is actively developed and deployed in Kenyan schools. We release improvements continuously based on direct school feedback.' },
@@ -154,7 +154,7 @@ export default function Landing() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
 
-            {/* Left — text */}
+            {/* Left : text */}
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-100 border border-brand-200 mb-6">
                 <span className="w-1.5 h-1.5 rounded-full bg-brand-500 animate-pulse" />
@@ -168,7 +168,7 @@ export default function Landing() {
               </h1>
 
               <p className="text-slate-500 text-lg leading-relaxed mb-8 max-w-lg">
-                Connect teachers, students, parents, and administrators in one platform built from the ground up for Kenya's CBC curriculum — with M-Pesa fees, NEMIS exports, and real-time analytics.
+                Connect teachers, students, parents, and administrators in one platform built from the ground up for Kenya's CBC curriculum : with M-Pesa fees, NEMIS exports, and real-time analytics.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-3 mb-10">
@@ -192,7 +192,7 @@ export default function Landing() {
               </div>
             </div>
 
-            {/* Right — dashboard mockup */}
+            {/* Right : dashboard mockup */}
             <div className="relative">
               <div className="absolute -inset-4 bg-brand-500/10 rounded-3xl blur-2xl" />
               <div className="relative rounded-2xl border border-slate-200 bg-white shadow-2xl overflow-hidden">
@@ -242,9 +242,9 @@ export default function Landing() {
                     {/* Stat cards */}
                     <div className="grid grid-cols-3 gap-2">
                       {[
-                        { label: 'Students', val: '247', color: 'bg-blue-50 border-blue-100', text: 'text-blue-700' },
+                        { label: 'Students', val: '247', color: 'bg-brand-50 border-brand-100', text: 'text-brand-700' },
                         { label: 'Attendance', val: '94%', color: 'bg-emerald-50 border-emerald-100', text: 'text-emerald-700' },
-                        { label: 'Fee Collected', val: '89%', color: 'bg-violet-50 border-violet-100', text: 'text-violet-700' },
+                        { label: 'Fee Collected', val: '89%', color: 'bg-brand-50 border-brand-100', text: 'text-brand-700' },
                       ].map(({ label, val, color, text }) => (
                         <div key={label} className={`${color} border rounded-xl p-2.5`}>
                           <div className="text-[9px] text-slate-500">{label}</div>
@@ -255,7 +255,7 @@ export default function Landing() {
 
                     {/* Chart area */}
                     <div className="bg-white rounded-xl border border-slate-200 p-3">
-                      <div className="text-[9px] font-semibold text-slate-600 mb-2">CBC Assessment Overview — Grade 4</div>
+                      <div className="text-[9px] font-semibold text-slate-600 mb-2">CBC Assessment Overview : Grade 4</div>
                       <div className="flex items-end gap-0.5" style={{ height: 60 }}>
                         {[55,70,45,85,60,90,50,75,65,80,95,72].map((h, i) => (
                           <div key={i} className="flex-1 rounded-t"
@@ -324,7 +324,7 @@ export default function Landing() {
               Built for the complex demands of<br className="hidden sm:block" />modern education
             </h2>
             <p className="text-slate-500 max-w-xl mx-auto">
-              Every module is designed around how Kenyan schools actually operate — not generic templates bolted together.
+              Every module is designed around how Kenyan schools actually operate : not generic templates bolted together.
             </p>
           </div>
 
@@ -381,7 +381,7 @@ export default function Landing() {
             <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight mb-3">
               Built specifically for every stakeholder
             </h2>
-            <p className="text-slate-500">For every campus leader and learner — not a one-size-fits-all solution.</p>
+            <p className="text-slate-500">For every campus leader and learner : not a one-size-fits-all solution.</p>
           </div>
 
           {/* Role tabs */}
@@ -398,7 +398,7 @@ export default function Landing() {
 
           {/* Role content */}
           <div className="grid lg:grid-cols-2 gap-10 items-center">
-            {/* Left — text */}
+            {/* Left : text */}
             <div>
               <h3 className="text-2xl font-bold text-slate-900 mb-3">{role.headline}</h3>
               <p className="text-slate-500 mb-6 leading-relaxed">{role.desc}</p>
@@ -430,7 +430,7 @@ export default function Landing() {
               </Link>
             </div>
 
-            {/* Right — role UI mockup */}
+            {/* Right : role UI mockup */}
             <div className="relative">
               <div className="absolute -inset-3 bg-brand-100/60 rounded-3xl blur-xl" />
               <div className="relative bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden">
