@@ -371,12 +371,36 @@ export const initiateMpesaPayment = async (req, res) => {
     });
 
     // Initiate STK Push
-    const stkResponse = await initiateSTKPush({
-      phone,
-      amount: Number(amount),
-      accountRef: `${student.admissionNo}`,
-      description: `Fees: ${student.fullName} | ${student.admissionNo} | Term ${term} ${year}`,
-    });
+    let stkResponse;
+    try {
+      stkResponse = await initiateSTKPush({
+        phone,
+        amount: Number(amount),
+        accountRef: `${student.admissionNo}`,
+        description: `Fees: ${student.fullName} | ${student.admissionNo} | Term ${term} ${year}`,
+      });
+    } catch (stkErr) {
+      // Mark the pending payment as failed so it doesn't sit as a ghost record
+      await prisma.feePayment.update({
+        where: { id: payment.id },
+        data: { status: "FAILED", notes: "STK Push could not be initiated" },
+      });
+
+      // Distinguish between config errors and network/Safaricom errors
+      const isNetworkError = stkErr.code === "ENOTFOUND" || stkErr.code === "ECONNREFUSED" || stkErr.code === "ETIMEDOUT";
+      const isMissingCreds = !process.env.MPESA_CONSUMER_KEY || process.env.MPESA_CONSUMER_KEY.includes("your_");
+
+      if (isMissingCreds) {
+        return error(res, "M-Pesa is not configured. Add your Daraja API credentials to enable mobile payments.", 503);
+      }
+      if (isNetworkError) {
+        return error(res, "M-Pesa service is currently unreachable. Please try again shortly.", 503);
+      }
+
+      // Safaricom API error (e.g. wrong credentials, invalid shortcode)
+      const safaricomMsg = stkErr.response?.data?.errorMessage ?? stkErr.response?.data?.ResultDesc ?? stkErr.message;
+      return error(res, `M-Pesa error: ${safaricomMsg}`, 502);
+    }
 
     // Store the CheckoutRequestID so we can match the callback
     await prisma.feePayment.update({
@@ -390,7 +414,7 @@ export const initiateMpesaPayment = async (req, res) => {
       message: "Payment prompt sent to phone. Enter your M-Pesa PIN to complete.",
     }, "STK Push initiated");
   } catch (err) {
-    return error(res, err.message);
+    return error(res, err.message, 500);
   }
 };
 
