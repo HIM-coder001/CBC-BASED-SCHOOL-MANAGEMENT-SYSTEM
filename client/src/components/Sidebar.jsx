@@ -210,21 +210,22 @@ export default function Sidebar() {
     <>
       {/* Desktop sidebar */}
       <aside
-        className={`hidden md:flex flex-col bg-sidebar border-r border-white/8 transition-all duration-300 shrink-0
+        className={`hidden md:flex flex-col fixed top-0 left-0 h-screen bg-sidebar border-r border-white/8 transition-all duration-300 z-30
           ${collapsed ? 'w-16' : 'w-60'}
         `}
-        style={{ minHeight: '100vh' }}
       >
         <SidebarContent />
         {/* Collapse toggle */}
         <button
           onClick={() => setCollapsed(!collapsed)}
           className="absolute top-20 -right-3 w-6 h-6 bg-sidebar border border-white/20 rounded-full flex items-center justify-center text-slate-400 hover:text-white transition-colors z-10 hidden md:flex"
-          style={{ position: 'fixed', left: collapsed ? '52px' : '228px' }}
         >
           {collapsed ? <ChevronRight className="w-3 h-3" /> : <ChevronLeft className="w-3 h-3" />}
         </button>
       </aside>
+
+      {/* Desktop spacer so main content doesn't hide under the fixed sidebar */}
+      <div className={`hidden md:block shrink-0 transition-all duration-300 ${collapsed ? 'w-16' : 'w-60'}`} />
 
       {/* Mobile top bar */}
       <div className="md:hidden fixed top-0 left-0 right-0 z-40 bg-sidebar border-b border-white/10 flex items-center justify-between px-4 h-14">
