@@ -12,6 +12,8 @@ const METHODS = [{value:'CASH',label:'Cash'},{value:'MPESA',label:'M-Pesa'},{val
 
 const STATUS_BADGE = { PAID: 'success', PARTIAL: 'warning', UNPAID: 'danger' }
 
+const fmt = (val) => `KES ${Number(val || 0).toLocaleString()}`
+
 export default function Fees() {
 
   const [tab, setTab]               = useState('overview')
@@ -119,9 +121,9 @@ export default function Fees() {
 
         {/* Summary stats */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <StatCard title="Expected"  value={`KES ${totalExpected.toLocaleString()}`}   icon={DollarSign}   color="brand" />
-          <StatCard title="Collected" value={`KES ${totalCollected.toLocaleString()}`}  icon={TrendingUp}   color="emerald" />
-          <StatCard title="Balance"   value={`KES ${totalBalance.toLocaleString()}`}    icon={AlertCircle}  color="rose" />
+          <StatCard title="Expected"  value={fmt(totalExpected)}   icon={DollarSign}   color="brand" />
+          <StatCard title="Collected" value={fmt(totalCollected)}  icon={TrendingUp}   color="emerald" />
+          <StatCard title="Balance"   value={fmt(totalBalance)}    icon={AlertCircle}  color="rose" />
           <StatCard title="In Arrears" value={`${unpaidCount} students`}                icon={Users}        color="amber" />
         </div>
 
@@ -165,10 +167,10 @@ export default function Fees() {
                         <td className="font-medium text-slate-800">{r.student.fullName}</td>
                         <td><span className="font-mono text-xs bg-surface-100 px-2 py-0.5 rounded">{r.student.admissionNo}</span></td>
                         <td className="text-slate-500">Grade {r.student.class?.grade ?? '—'}</td>
-                        <td className="text-slate-600">KES {r.totalFees.toLocaleString()}</td>
-                        <td className="text-emerald-600 font-medium">KES {r.totalPaid.toLocaleString()}</td>
+                        <td className="text-slate-600">{fmt(r.totalFees)}</td>
+                        <td className="text-emerald-600 font-medium">{fmt(r.totalPaid)}</td>
                         <td className={`font-semibold ${r.balance > 0 ? 'text-red-600' : 'text-emerald-600'}`}>
-                          KES {r.balance.toLocaleString()}
+                          {fmt(r.balance)}
                         </td>
                         <td><Badge variant={STATUS_BADGE[r.status] ?? 'gray'}>{r.status}</Badge></td>
                       </tr>
@@ -190,8 +192,8 @@ export default function Fees() {
                     <tr key={inv.id}>
                       <td>{inv.student?.fullName}</td>
                       <td>{inv.student?.class?.name}</td>
-                      <td>KES {(inv.amountDue - inv.amountPaid).toLocaleString()}</td>
-                      <td>KES {inv.amountPaid.toLocaleString()}</td>
+                      <td>{fmt(inv.amountDue - inv.amountPaid)}</td>
+                      <td>{fmt(inv.amountPaid)}</td>
                       <td>{inv.student?.parent?.phone ?? '—'}</td>
                     </tr>
                   ))}
@@ -217,7 +219,7 @@ export default function Fees() {
                         <td><Badge variant="brand">Grade {s.grade}</Badge></td>
                         <td><Badge variant="info">Term {s.term}</Badge></td>
                         <td className="text-slate-500">{s.year}</td>
-                        <td className="font-semibold text-slate-800">KES {Number(s.amount).toLocaleString()}</td>
+                        <td className="font-semibold text-slate-800">{fmt(s.amount)}</td>
                         <td className="text-slate-400 text-xs">{s.description ?? '—'}</td>
                         <td>
                           <button onClick={() => handleDeleteStructure(s.id)}
