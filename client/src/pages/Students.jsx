@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import Layout from '../components/Layout'
-import { Card, Button, Input, Select, Modal, Alert, EmptyState, SkeletonTable, PageHeader, Badge } from '../components/ui'
+import { Card, Button, Input, Select, Modal, Alert, EmptyState, SkeletonTable, PageHeader, Badge, ConfirmModal } from '../components/ui'
 import { studentAPI, classAPI, parentAPI } from '../api'
 import { Plus, Edit2, Trash2, Users, Search } from 'lucide-react'
 
@@ -17,6 +17,8 @@ export default function Students() {
   const [modalError, setModalError] = useState('')
   const [search, setSearch] = useState('')
   const [form, setForm] = useState(EMPTY_FORM)
+  const [deleteId, setDeleteId]   = useState(null)
+  const [deleting, setDeleting]   = useState(false)
 
   useEffect(() => { fetchStudents(); fetchClasses(); fetchParents() }, [])
 
@@ -58,10 +60,11 @@ export default function Students() {
     } catch (err) { setModalError(err.response?.data?.message ?? 'Failed to save student.') }
   }
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('Delete this student?')) return
-    try { await studentAPI.delete(id); fetchStudents() }
-    catch (err) { setError(err.response?.data?.message ?? 'Failed to delete student.') }
+  const handleDelete = async () => {
+    setDeleting(true)
+    try { await studentAPI.delete(deleteId); setDeleteId(null); fetchStudents() }
+    catch (err) { setError(err.response?.data?.message ?? 'Failed to delete student.'); setDeleteId(null) }
+    finally { setDeleting(false) }
   }
 
   const filtered = students.filter(s =>
@@ -116,8 +119,7 @@ export default function Students() {
                       <td>
                         <div className="flex items-center gap-1.5">
                           <button onClick={() => openModal(s)} className="p-1.5 rounded-lg text-slate-400 hover:text-brand-600 hover:bg-brand-50 transition-colors"><Edit2 className="w-4 h-4" /></button>
-                          <button onClick={() => handleDelete(s.id)} className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"><Trash2 className="w-4 h-4" /></button>
-                        </div>
+                          <button onClick={() => setDeleteId(s.id)} className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"><Trash2 className="w-4 h-4" /></button>                        </div>
                       </td>
                     </tr>
                   ))}
@@ -147,6 +149,14 @@ export default function Students() {
             placeholder="Select parent…" />
         </form>
       </Modal>
+      <ConfirmModal
+        isOpen={!!deleteId}
+        onClose={() => setDeleteId(null)}
+        onConfirm={handleDelete}
+        loading={deleting}
+        title="Delete Student"
+        message="This will permanently delete the student and all their records. This cannot be undone."
+      />
     </Layout>
   )
 }

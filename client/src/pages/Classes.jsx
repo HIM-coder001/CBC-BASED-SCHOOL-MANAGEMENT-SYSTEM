@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import Layout from '../components/Layout'
-import { Card, Button, Input, Modal, Alert, EmptyState, SkeletonTable, PageHeader, Badge } from '../components/ui'
+import { Card, Button, Input, Modal, Alert, EmptyState, SkeletonTable, PageHeader, Badge, ConfirmModal } from '../components/ui'
 import { classAPI } from '../api'
 import { Plus, Edit2, Trash2, School } from 'lucide-react'
 
@@ -14,6 +14,8 @@ export default function Classes() {
   const [error, setError] = useState('')
   const [modalError, setModalError] = useState('')
   const [form, setForm] = useState(EMPTY)
+  const [deleteId, setDeleteId] = useState(null)
+  const [deleting, setDeleting] = useState(false)
 
   useEffect(() => { fetchClasses() }, [])
 
@@ -39,10 +41,11 @@ export default function Classes() {
     } catch (err) { setModalError(err.response?.data?.message ?? 'Failed to save class.') }
   }
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('Delete this class?')) return
-    try { await classAPI.delete(id); fetchClasses() }
-    catch (err) { setError(err.response?.data?.message ?? 'Failed to delete class.') }
+  const handleDelete = async () => {
+    setDeleting(true)
+    try { await classAPI.delete(deleteId); setDeleteId(null); fetchClasses() }
+    catch (err) { setError(err.response?.data?.message ?? 'Failed to delete class.'); setDeleteId(null) }
+    finally { setDeleting(false) }
   }
 
   return (
@@ -78,7 +81,7 @@ export default function Classes() {
                       <td>
                         <div className="flex items-center gap-1.5">
                           <button onClick={() => openModal(c)} className="p-1.5 rounded-lg text-slate-400 hover:text-brand-600 hover:bg-brand-50 transition-colors"><Edit2 className="w-4 h-4" /></button>
-                          <button onClick={() => handleDelete(c.id)} className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"><Trash2 className="w-4 h-4" /></button>
+                          <button onClick={() => setDeleteId(c.id)} className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"><Trash2 className="w-4 h-4" /></button>
                         </div>
                       </td>
                     </tr>
@@ -104,6 +107,14 @@ export default function Classes() {
           </div>
         </form>
       </Modal>
+      <ConfirmModal
+        isOpen={!!deleteId}
+        onClose={() => setDeleteId(null)}
+        onConfirm={handleDelete}
+        loading={deleting}
+        title="Delete Class"
+        message="This will delete the class. Students in this class will become unassigned. This cannot be undone."
+      />
     </Layout>
   )
 }

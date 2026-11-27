@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import Layout from '../components/Layout'
-import { Card, Button, Input, Select, Modal, Alert, EmptyState, SkeletonTable, PageHeader, Badge } from '../components/ui'
+import { Card, Button, Input, Select, Modal, Alert, EmptyState, SkeletonTable, PageHeader, Badge, ConfirmModal } from '../components/ui'
 import { teacherAPI, userAPI, classAPI } from '../api'
 import { Plus, Edit2, Trash2, GraduationCap, Search } from 'lucide-react'
 
@@ -16,6 +16,8 @@ export default function Teachers() {
   const [modalError, setModalError] = useState('')
   const [search, setSearch] = useState('')
   const [form, setForm] = useState(EMPTY)
+  const [deleteId, setDeleteId] = useState(null)
+  const [deleting, setDeleting] = useState(false)
 
   useEffect(() => {
     fetchTeachers()
@@ -92,10 +94,11 @@ export default function Teachers() {
     } catch (err) { setModalError(err.response?.data?.message ?? 'Failed to save teacher.') }
   }
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('Delete this teacher?')) return
-    try { await teacherAPI.delete(id); fetchTeachers() }
-    catch (err) { setError(err.response?.data?.message ?? 'Failed to delete.') }
+  const handleDelete = async () => {
+    setDeleting(true)
+    try { await teacherAPI.delete(deleteId); setDeleteId(null); fetchTeachers() }
+    catch (err) { setError(err.response?.data?.message ?? 'Failed to delete.'); setDeleteId(null) }
+    finally { setDeleting(false) }
   }
 
   const filtered = teachers.filter(t =>
@@ -138,7 +141,7 @@ export default function Teachers() {
                       <td>
                         <div className="flex items-center gap-1.5">
                           <button onClick={() => openModal(t)} className="p-1.5 rounded-lg text-slate-400 hover:text-brand-600 hover:bg-brand-50 transition-colors"><Edit2 className="w-4 h-4" /></button>
-                          <button onClick={() => handleDelete(t.id)} className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"><Trash2 className="w-4 h-4" /></button>
+                          <button onClick={() => setDeleteId(t.id)} className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"><Trash2 className="w-4 h-4" /></button>
                         </div>
                       </td>
                     </tr>
@@ -178,6 +181,14 @@ export default function Teachers() {
           )}
         </form>
       </Modal>
+      <ConfirmModal
+        isOpen={!!deleteId}
+        onClose={() => setDeleteId(null)}
+        onConfirm={handleDelete}
+        loading={deleting}
+        title="Delete Teacher"
+        message="This will permanently remove the teacher. This cannot be undone."
+      />
     </Layout>
   )
 }
