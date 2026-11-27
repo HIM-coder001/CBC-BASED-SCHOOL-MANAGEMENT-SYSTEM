@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import Layout from '../components/Layout'
-import { Card, Button, Input, Modal, Alert, EmptyState, SkeletonTable, PageHeader, Badge } from '../components/ui'
+import { Card, Button, Input, Modal, Alert, EmptyState, SkeletonTable, PageHeader, Badge, ConfirmModal } from '../components/ui'
 import { parentAPI, studentAPI, userAPI } from '../api'
 import { Plus, Edit2, Trash2, Users, Search, Link2 } from 'lucide-react'
 
@@ -20,6 +20,8 @@ export default function Parents() {
   const [form, setForm]         = useState(EMPTY_FORM)
   const [selectedStudentIds, setSelectedStudentIds] = useState([])
   const [saving, setSaving]     = useState(false)
+  const [deleteId, setDeleteId] = useState(null)
+  const [deleting, setDeleting] = useState(false)
 
   useEffect(() => { fetchParents(); fetchStudents() }, [])
 
@@ -74,10 +76,11 @@ export default function Parents() {
     finally { setSaving(false) }
   }
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('Delete this parent? This will unlink all their children.')) return
-    try { await parentAPI.delete(id); fetchParents() }
-    catch (err) { setError(err.response?.data?.message ?? 'Failed to delete.') }
+  const handleDelete = async () => {
+    setDeleting(true)
+    try { await parentAPI.delete(deleteId); setDeleteId(null); fetchParents() }
+    catch (err) { setError(err.response?.data?.message ?? 'Failed to delete.'); setDeleteId(null) }
+    finally { setDeleting(false) }
   }
 
   const openLinkModal = (parent) => {
@@ -181,7 +184,7 @@ export default function Parents() {
                               className="p-1.5 rounded-lg text-slate-400 hover:text-brand-600 hover:bg-brand-50 transition-colors">
                               <Edit2 className="w-4 h-4" />
                             </button>
-                            <button onClick={() => handleDelete(p.id)}
+                            <button onClick={() => setDeleteId(p.id)}
                               className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors">
                               <Trash2 className="w-4 h-4" />
                             </button>
@@ -264,6 +267,15 @@ export default function Parents() {
           </div>
         )}
       </Modal>
+
+      <ConfirmModal
+        isOpen={!!deleteId}
+        onClose={() => setDeleteId(null)}
+        onConfirm={handleDelete}
+        loading={deleting}
+        title="Delete Parent"
+        message="This will remove the parent and unlink their children. This cannot be undone."
+      />
     </Layout>
   )
 }

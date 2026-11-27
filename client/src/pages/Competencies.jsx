@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import Layout from '../components/Layout'
-import { Card, Button, Input, Select, TextArea, Modal, Alert, EmptyState, SkeletonTable, PageHeader, Badge } from '../components/ui'
+import { Card, Button, Input, Select, TextArea, Modal, Alert, EmptyState, SkeletonTable, PageHeader, Badge, ConfirmModal } from '../components/ui'
 import { competencyAPI, studentAPI } from '../api'
 import { useAuthStore } from '../store'
 import { Award, Plus, Edit2, Trash2, Search } from 'lucide-react'
@@ -19,6 +19,8 @@ export default function Competencies() {
   const [modalError, setModalError] = useState('')
   const [form, setForm] = useState(EMPTY)
   const [search, setSearch] = useState('')
+  const [deleteId, setDeleteId] = useState(null)
+  const [deleting, setDeleting] = useState(false)
 
   useEffect(() => { fetchCompetencies(); fetchStudents() }, [])
 
@@ -70,10 +72,11 @@ export default function Competencies() {
     } catch (err) { setModalError(err.response?.data?.message ?? 'Failed to save.') }
   }
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('Delete this competency?')) return
-    try { await competencyAPI.delete(id); fetchCompetencies() }
-    catch (err) { setError(err.response?.data?.message ?? 'Failed to delete.') }
+  const handleDelete = async () => {
+    setDeleting(true)
+    try { await competencyAPI.delete(deleteId); setDeleteId(null); fetchCompetencies() }
+    catch (err) { setError(err.response?.data?.message ?? 'Failed to delete.'); setDeleteId(null) }
+    finally { setDeleting(false) }
   }
 
   const filtered = useMemo(() => {
@@ -144,7 +147,7 @@ export default function Competencies() {
                           <td>
                             <div className="flex items-center gap-1.5">
                               <button onClick={() => openModal(c)} className="p-1.5 rounded-lg text-slate-400 hover:text-brand-600 hover:bg-brand-50 transition-colors"><Edit2 className="w-4 h-4" /></button>
-                              <button onClick={() => handleDelete(c.id)} className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"><Trash2 className="w-4 h-4" /></button>
+                              <button onClick={() => setDeleteId(c.id)} className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"><Trash2 className="w-4 h-4" /></button>
                             </div>
                           </td>
                         )}
@@ -180,6 +183,15 @@ export default function Competencies() {
           <Input label="Evidence (optional)" value={form.evidence} onChange={e => setForm({...form, evidence: e.target.value})} />
         </form>
       </Modal>
+
+      <ConfirmModal
+        isOpen={!!deleteId}
+        onClose={() => setDeleteId(null)}
+        onConfirm={handleDelete}
+        loading={deleting}
+        title="Delete Competency"
+        message="This will remove this competency and all its skill assessments."
+      />
     </Layout>
   )
 }

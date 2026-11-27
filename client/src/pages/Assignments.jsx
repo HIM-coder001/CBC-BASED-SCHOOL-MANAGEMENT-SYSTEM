@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import Layout from '../components/Layout'
-import { Card, Button, Input, Select, TextArea, Modal, Alert, EmptyState, SkeletonTable, PageHeader, Badge } from '../components/ui'
+import { Card, Button, Input, Select, TextArea, Modal, Alert, EmptyState, SkeletonTable, PageHeader, Badge, ConfirmModal } from '../components/ui'
 import { assignmentAPI, classAPI, studentAPI } from '../api'
 import { useAuthStore } from '../store'
 import { ClipboardList, Plus, Edit2, Trash2, Clock } from 'lucide-react'
@@ -20,6 +20,8 @@ export default function Assignments() {
   const [error, setError] = useState('')
   const [viewError, setViewError] = useState('')
   const [modalError, setModalError] = useState('')
+  const [deleteId, setDeleteId] = useState(null)
+  const [deleting, setDeleting] = useState(false)
   const [form, setForm] = useState(EMPTY)
 
   useEffect(() => { fetchAssignments(); fetchClasses() }, [])
@@ -95,10 +97,11 @@ export default function Assignments() {
     } catch (err) { setModalError(err.response?.data?.message ?? 'Failed to save assignment.') }
   }
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('Delete this assignment?')) return
-    try { await assignmentAPI.delete(id); fetchAssignments() }
-    catch (err) { setError(err.response?.data?.message ?? 'Failed to delete.') }
+  const handleDelete = async () => {
+    setDeleting(true)
+    try { await assignmentAPI.delete(deleteId); setDeleteId(null); fetchAssignments() }
+    catch (err) { setError(err.response?.data?.message ?? 'Failed to delete.'); setDeleteId(null) }
+    finally { setDeleting(false) }
   }
 
   const classMap = Object.fromEntries(classes.map(c => [c.id, c]))
@@ -163,7 +166,7 @@ export default function Assignments() {
                           <td>
                             <div className="flex items-center gap-1.5">
                               <button onClick={() => openModal(a)} className="p-1.5 rounded-lg text-slate-400 hover:text-brand-600 hover:bg-brand-50 transition-colors"><Edit2 className="w-4 h-4" /></button>
-                              <button onClick={() => handleDelete(a.id)} className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"><Trash2 className="w-4 h-4" /></button>
+                              <button onClick={() => setDeleteId(a.id)} className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"><Trash2 className="w-4 h-4" /></button>
                             </div>
                           </td>
                         )}
@@ -235,6 +238,16 @@ export default function Assignments() {
           <Input label="Due Date" type="date" value={form.dueDate} onChange={e => setForm({...form, dueDate: e.target.value})} required />
         </form>
       </Modal>
+
+      <ConfirmModal
+        isOpen={!!deleteId}
+        onClose={() => setDeleteId(null)}
+        onConfirm={handleDelete}
+        loading={deleting}
+        title="Delete Assignment"
+        message="This will remove the assignment and all student submissions."
+      />
     </Layout>
   )
 }
+

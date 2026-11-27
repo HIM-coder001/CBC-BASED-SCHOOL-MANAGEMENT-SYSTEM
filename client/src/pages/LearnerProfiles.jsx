@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import Layout from '../components/Layout'
-import { Card, Button, Input, Select, TextArea, Modal, Alert, EmptyState, SkeletonTable, PageHeader, Badge } from '../components/ui'
+import { Card, Button, Input, Select, TextArea, Modal, Alert, EmptyState, SkeletonTable, PageHeader, Badge, ConfirmModal } from '../components/ui'
 import apiClient from '../api'
 import { useAuthStore } from '../store'
 import { Users, Plus, Edit2, Trash2, Search } from 'lucide-react'
@@ -48,6 +48,8 @@ export default function LearnerProfiles() {
   const [filterStudentId, setFilterStudentId] = useState('')
   const [filterTerm, setFilterTerm] = useState('')
   const [filterYear, setFilterYear] = useState('')
+  const [deleteId, setDeleteId] = useState(null)
+  const [deleting, setDeleting] = useState(false)
 
   useEffect(() => {
     fetchProfiles()
@@ -117,13 +119,17 @@ export default function LearnerProfiles() {
     }
   }
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('Delete this learner profile entry?')) return
+  const handleDelete = async () => {
+    setDeleting(true)
     try {
-      await apiClient.delete(`/learner-profiles/${id}`)
+      await apiClient.delete(`/learner-profiles/${deleteId}`)
+      setDeleteId(null)
       fetchProfiles()
     } catch (err) {
       setError(err.response?.data?.message ?? 'Failed to delete learner profile.')
+      setDeleteId(null)
+    } finally {
+      setDeleting(false)
     }
   }
 
@@ -233,7 +239,7 @@ export default function LearnerProfiles() {
                         <td>
                           <div className="flex items-center gap-2">
                             <button onClick={() => openModal(profile)} className="p-1.5 rounded-lg text-slate-400 hover:text-brand-600 hover:bg-brand-50 transition-colors"><Edit2 className="w-4 h-4" /></button>
-                            <button onClick={() => handleDelete(profile.id)} className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"><Trash2 className="w-4 h-4" /></button>
+                            <button onClick={() => setDeleteId(profile.id)} className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"><Trash2 className="w-4 h-4" /></button>
                           </div>
                         </td>
                       )}
@@ -294,6 +300,15 @@ export default function LearnerProfiles() {
           />
         </form>
       </Modal>
+
+      <ConfirmModal
+        isOpen={!!deleteId}
+        onClose={() => setDeleteId(null)}
+        onConfirm={handleDelete}
+        loading={deleting}
+        title="Delete Profile Entry"
+        message="This will remove this learner profile entry."
+      />
     </Layout>
   )
 }

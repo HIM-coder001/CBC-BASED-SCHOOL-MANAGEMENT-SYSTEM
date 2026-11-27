@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import Layout from '../components/Layout'
-import { Card, Button, Input, Select, Modal, Alert, EmptyState, SkeletonTable, PageHeader, Badge, StatCard } from '../components/ui'
+import { Card, Button, Input, Select, Modal, Alert, EmptyState, SkeletonTable, PageHeader, Badge, StatCard, ConfirmModal } from '../components/ui'
 import { feeAPI, studentAPI } from '../api'
 
 import { DollarSign, Plus, Trash2, CreditCard, Users, TrendingUp, AlertCircle } from 'lucide-react'
@@ -39,6 +39,8 @@ export default function Fees() {
   const [saving, setSaving]                       = useState(false)
   const [generatingInvoices, setGeneratingInvoices] = useState(false)
   const [defaulters, setDefaulters] = useState([])
+  const [deleteStructureId, setDeleteStructureId] = useState(null)
+  const [deletingStructure, setDeletingStructure] = useState(false)
 
   useEffect(() => { loadAll() }, [filterTerm, filterYear, filterGrade])
   useEffect(() => {
@@ -72,10 +74,11 @@ export default function Fees() {
     finally { setSaving(false) }
   }
 
-  const handleDeleteStructure = async (id) => {
-    if (!window.confirm('Delete this fee structure?')) return
-    try { await feeAPI.deleteStructure(id); loadAll() }
-    catch (err) { setError(err.response?.data?.message ?? 'Failed to delete.') }
+  const handleDeleteStructure = async () => {
+    setDeletingStructure(true)
+    try { await feeAPI.deleteStructure(deleteStructureId); setDeleteStructureId(null); loadAll() }
+    catch (err) { setError(err.response?.data?.message ?? 'Failed to delete.'); setDeleteStructureId(null) }
+    finally { setDeletingStructure(false) }
   }
 
   const handleRecordPayment = async (e) => {
@@ -240,7 +243,7 @@ export default function Fees() {
                         <td className="font-semibold text-slate-800">{fmt(s.amount)}</td>
                         <td className="text-slate-400 text-xs">{s.description ?? '—'}</td>
                         <td>
-                          <button onClick={() => handleDeleteStructure(s.id)}
+                          <button onClick={() => setDeleteStructureId(s.id)}
                             className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors">
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -325,6 +328,15 @@ export default function Fees() {
           <Input label="Notes (optional)" value={paymentForm.notes} onChange={e => setPaymentForm({...paymentForm, notes: e.target.value})} />
         </form>
       </Modal>
+
+      <ConfirmModal
+        isOpen={!!deleteStructureId}
+        onClose={() => setDeleteStructureId(null)}
+        onConfirm={handleDeleteStructure}
+        loading={deletingStructure}
+        title="Delete Fee Structure"
+        message="This will remove the fee structure. Existing invoices will not be affected."
+      />
     </Layout>
   )
 }
