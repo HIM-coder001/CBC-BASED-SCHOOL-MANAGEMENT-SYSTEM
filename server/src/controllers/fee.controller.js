@@ -90,8 +90,8 @@ const syncInvoice = async (studentId, term, year) => {
   const payments = await prisma.feePayment.findMany({
     where: { studentId, term, year, status: "COMPLETED" },
   });
-  const totalPaid = payments.reduce((s, p) => s + p.amount, 0);
-  const amountDue = structure.amount;
+  const totalPaid = payments.reduce((s, p) => s + Number(p.amount), 0);
+  const amountDue = Number(structure.amount);
   const status = totalPaid >= amountDue ? "PAID" : totalPaid > 0 ? "PARTIAL" : "UNPAID";
 
   await prisma.feeInvoice.upsert({
@@ -281,10 +281,10 @@ export const getStudentFeeStatement = async (req, res) => {
       });
     }
 
-    const totalFees = feeStructure?.amount ?? 0;
+    const totalFees = Number(feeStructure?.amount ?? 0);
     const totalPaid = payments
       .filter(p => p.status === "COMPLETED")
-      .reduce((sum, p) => sum + p.amount, 0);
+      .reduce((sum, p) => sum + Number(p.amount), 0);
     const balance = totalFees - totalPaid;
 
     return success(res, {
@@ -323,8 +323,8 @@ export const getFeeOverview = async (req, res) => {
         where: { studentId: s.id, term, year: Number(year), status: "COMPLETED" },
       });
 
-      const totalFees = feeStructure?.amount ?? 0;
-      const totalPaid = payments.reduce((sum, p) => sum + p.amount, 0);
+      const totalFees = Number(feeStructure?.amount ?? 0);
+      const totalPaid = payments.reduce((sum, p) => sum + Number(p.amount), 0);
       const balance   = totalFees - totalPaid;
 
       return {
