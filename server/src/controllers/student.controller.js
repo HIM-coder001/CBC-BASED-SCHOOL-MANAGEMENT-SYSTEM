@@ -57,8 +57,8 @@ export const getStudentById = async (req, res) => {
 
 export const getStudents = async (req, res) => {
   try {
-    const { page = 1, limit = 50, search } = req.query;
-    const skip = (Number(page) - 1) * Number(limit);
+    const { search } = req.query;
+    const { skip, take, page, limit } = req.pagination;
     const schoolId = req.user.schoolId;
 
     const where = { schoolId, ...(search && {
@@ -73,12 +73,12 @@ export const getStudents = async (req, res) => {
         where,
         include: { class: true, user: true },
         skip,
-        take: Number(limit),
+        take,
         orderBy: { fullName: "asc" },
       }),
       prisma.student.count({ where }),
     ]);
-    return success(res, { students, total, page: Number(page), limit: Number(limit) }, "Students fetched successfully");
+    return success(res, { students, total, page, limit }, "Students fetched successfully");
   } catch (err) {
     return error(res, err.message);
   }

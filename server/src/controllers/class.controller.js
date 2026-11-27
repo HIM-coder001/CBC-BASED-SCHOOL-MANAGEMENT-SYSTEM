@@ -18,8 +18,7 @@ export const createClass = async (req, res) => {
 
 export const getClasses = async (req, res) => {
   try {
-    const { page = 1, limit = 100 } = req.query;
-    const skip = (Number(page) - 1) * Number(limit);
+    const { skip, take, page, limit } = req.pagination;
     const schoolId = req.user.schoolId;
 
     const [classes, total] = await Promise.all([
@@ -27,7 +26,7 @@ export const getClasses = async (req, res) => {
         where: { schoolId },
         include: { students: true, teachers: true },
         skip,
-        take: Number(limit),
+        take,
         orderBy: { name: "asc" },
       }),
       prisma.class.count({ where: { schoolId } }),

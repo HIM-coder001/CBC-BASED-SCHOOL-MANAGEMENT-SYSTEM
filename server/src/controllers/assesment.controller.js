@@ -35,8 +35,8 @@ export const createAssessment = async (req, res) => {
 
 export const getAssessments = async (req, res) => {
   try {
-    const { term, year, classId, studentId, page = 1, limit = 100 } = req.query;
-    const skip = (Number(page) - 1) * Number(limit);
+    const { term, year, classId, studentId } = req.query;
+    const { skip, take, page, limit } = req.pagination;
     const schoolId = req.user.schoolId;
 
     // Always scope via the student's school
@@ -48,7 +48,7 @@ export const getAssessments = async (req, res) => {
       prisma.assessment.findMany({
         where,
         include: { student: true, subStrand: { include: { strand: { include: { learningArea: true } } } } },
-        skip, take: Number(limit),
+        skip, take,
         orderBy: { createdAt: "desc" },
       }),
       prisma.assessment.count({ where }),
