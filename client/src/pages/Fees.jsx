@@ -95,11 +95,11 @@ export default function Fees() {
     setShowPaymentModal(true)
   }
 
-  // Summary stats
-  const totalExpected = overview.reduce((s, r) => s + r.totalFees, 0)
-  const totalCollected = overview.reduce((s, r) => s + r.totalPaid, 0)
-  const totalBalance   = overview.reduce((s, r) => s + r.balance, 0)
-  const unpaidCount    = overview.filter(r => r.balance > 0).length
+  // Summary stats — coerce to Number() because MySQL Decimal fields come back as strings
+  const totalExpected  = overview.reduce((s, r) => s + Number(r.totalFees), 0)
+  const totalCollected = overview.reduce((s, r) => s + Number(r.totalPaid),  0)
+  const totalBalance   = overview.reduce((s, r) => s + Number(r.balance),    0)
+  const unpaidCount    = overview.filter(r => Number(r.balance) > 0).length
 
   return (
     <Layout>
@@ -169,7 +169,7 @@ export default function Fees() {
                         <td className="text-slate-500">Grade {r.student.class?.grade ?? '—'}</td>
                         <td className="text-slate-600">{fmt(r.totalFees)}</td>
                         <td className="text-emerald-600 font-medium">{fmt(r.totalPaid)}</td>
-                        <td className={`font-semibold ${r.balance > 0 ? 'text-red-600' : 'text-emerald-600'}`}>
+                        <td className={`font-semibold ${Number(r.balance) > 0 ? 'text-red-600' : 'text-emerald-600'}`}>
                           {fmt(r.balance)}
                         </td>
                         <td><Badge variant={STATUS_BADGE[r.status] ?? 'gray'}>{r.status}</Badge></td>
