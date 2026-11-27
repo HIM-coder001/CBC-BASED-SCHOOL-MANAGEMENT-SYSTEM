@@ -223,3 +223,23 @@ export function PageHeader({ title, subtitle, actions }) {
     </div>
   )
 }
+
+/* ─── ConfirmModal ───────────────────────────────────────────────────────── */
+export function ConfirmModal({ isOpen, onClose, onConfirm, title = 'Are you sure?', message, confirmLabel = 'Delete', loading = false }) {
+  return (
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={title}
+      size="sm"
+      actions={[
+        <Button key="c" variant="secondary" onClick={onClose} disabled={loading}>Cancel</Button>,
+        <Button key="d" variant="danger"    onClick={onConfirm} disabled={loading}>
+          {loading ? 'Deleting…' : confirmLabel}
+        </Button>,
+      ]}
+    >
+      <p className="text-sm text-slate-600">{message ?? 'This action cannot be undone.'}</p>
+    </Modal>
+  )
+}
