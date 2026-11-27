@@ -1,8 +1,10 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { useAuthStore } from '../store'
 import { authAPI } from '../api'
-import { Loader2, GraduationCap, Eye, EyeOff } from 'lucide-react'
+import { EduLinkLogoWhite } from '../components/EduLinkLogo'
+import EduLinkLogo from '../components/EduLinkLogo'
+import { Loader2, Eye, EyeOff, ArrowLeft } from 'lucide-react'
 
 const DEMO = [
   { role: 'Admin',   email: 'admin@school.com',   color: 'bg-brand-500' },
@@ -55,27 +57,24 @@ export default function Login() {
     <div className="min-h-screen flex">
       {/* Left panel */}
       <div className="hidden lg:flex lg:w-1/2 bg-sidebar flex-col justify-between p-12">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-brand-500 rounded-xl flex items-center justify-center">
-            <GraduationCap className="w-6 h-6 text-white" />
-          </div>
-          <span className="text-white font-bold text-lg">SchoolHub</span>
+        <div>
+          <EduLinkLogoWhite size={36} />
         </div>
 
         <div>
           <h1 className="text-4xl font-bold text-white leading-tight mb-4">
-            Competency Based<br />Curriculum Management
+            Kenya's CBC school<br />management platform
           </h1>
           <p className="text-slate-400 text-lg leading-relaxed">
-            A unified platform for Kenyan CBC schools — manage students, track competencies, generate report cards, and keep parents informed.
+            Connect admins, teachers, parents and students. CBC assessments, M-Pesa fees, NEMIS exports and real-time analytics — all in one place.
           </p>
 
           <div className="mt-10 grid grid-cols-2 gap-4">
             {[
-              { label: 'Students', value: '500+' },
-              { label: 'Teachers', value: '40+' },
-              { label: 'Classes', value: '20+' },
-              { label: 'Reports', value: '1000+' },
+              { label: 'CBC Aligned', value: '100%' },
+              { label: 'M-Pesa Ready', value: '✓' },
+              { label: 'Roles', value: '4' },
+              { label: 'Modules', value: '25+' },
             ].map(s => (
               <div key={s.label} className="bg-white/5 rounded-xl p-4 border border-white/10">
                 <p className="text-2xl font-bold text-brand-400">{s.value}</p>
@@ -85,18 +84,18 @@ export default function Login() {
           </div>
         </div>
 
-        <p className="text-slate-500 text-sm">© 2026 SchoolHub. All rights reserved.</p>
+        <p className="text-slate-500 text-sm">© {new Date().getFullYear()} EduLink. Built for Kenyan schools.</p>
       </div>
 
       {/* Right panel */}
       <div className="flex-1 flex items-center justify-center p-6 bg-surface-50">
         <div className="w-full max-w-md">
           {/* Mobile logo */}
-          <div className="flex items-center gap-2 mb-8 lg:hidden">
-            <div className="w-9 h-9 bg-brand-600 rounded-xl flex items-center justify-center">
-              <GraduationCap className="w-5 h-5 text-white" />
-            </div>
-            <span className="font-bold text-slate-800 text-lg">SchoolHub</span>
+          <div className="flex items-center justify-between mb-8 lg:hidden">
+            <EduLinkLogo size={30} />
+            <Link to="/landing" className="flex items-center gap-1.5 text-sm text-slate-400 hover:text-slate-600 transition-colors">
+              <ArrowLeft className="w-4 h-4" />Back
+            </Link>
           </div>
 
           <div className="mb-8">

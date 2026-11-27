@@ -109,11 +109,11 @@ export default function Sidebar() {
       {/* Logo */}
       <div className={`flex items-center gap-3 px-4 py-5 border-b border-white/10 ${collapsed && !mobile ? 'justify-center px-2' : ''}`}>
         <div className="w-9 h-9 bg-brand-500 rounded-xl flex items-center justify-center shrink-0 shadow-lg">
-          <span className="text-white font-bold text-sm">S</span>
+          <span className="text-white font-bold text-sm">E</span>
         </div>
         {(!collapsed || mobile) && (
           <div className="min-w-0">
-            <p className="text-white font-bold text-sm leading-tight">SchoolHub</p>
+            <p className="text-white font-bold text-sm leading-tight">EduLink</p>
             <p className="text-slate-400 text-xs">CBC Management</p>
           </div>
         )}
@@ -231,9 +231,9 @@ export default function Sidebar() {
       <div className="md:hidden fixed top-0 left-0 right-0 z-40 bg-sidebar border-b border-white/10 flex items-center justify-between px-4 h-14">
         <div className="flex items-center gap-2">
           <div className="w-7 h-7 bg-brand-500 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-xs">S</span>
+            <span className="text-white font-bold text-xs">E</span>
           </div>
-          <span className="text-white font-bold text-sm">SchoolHub</span>
+          <span className="text-white font-bold text-sm">EduLink</span>
         </div>
         <div className="flex items-center gap-2">
           {user?.role === 'PARENT' && (
