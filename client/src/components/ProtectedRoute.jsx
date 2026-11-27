@@ -5,7 +5,7 @@ export default function ProtectedRoute({ children, requiredRole = null, required
   const { isAuthenticated, user } = useAuthStore()
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />
+    return <Navigate to="/landing" replace />
   }
 
   const allowed = requiredRoles ?? (requiredRole ? [requiredRole] : null)

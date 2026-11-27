@@ -33,6 +33,7 @@ import Library from './pages/Library'
 import Tpad from './pages/Tpad'
 import Exams from './pages/Exams'
 import Nemis from './pages/Nemis'
+import Landing from './pages/Landing'
 import NotFound from './pages/NotFound'
 
 function App() {
@@ -48,6 +49,7 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/landing" element={<Landing />} />
 
           <Route path="/" element={<P><Dashboard /></P>} />
 
