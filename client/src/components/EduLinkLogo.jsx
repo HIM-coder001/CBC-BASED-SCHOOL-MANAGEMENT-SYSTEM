@@ -17,12 +17,12 @@ export default function EduLinkLogo({ size = 40, variant = 'full' }) {
     >
       <defs>
         <linearGradient id="logoGrad" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#818cf8" />
-          <stop offset="100%" stopColor="#4f46e5" />
+          <stop offset="0%" stopColor="#60a5fa" />
+          <stop offset="100%" stopColor="#2563eb" />
         </linearGradient>
         <linearGradient id="logoGrad2" x1="48" y1="0" x2="0" y2="48" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#6366f1" />
-          <stop offset="100%" stopColor="#312e81" />
+          <stop offset="0%" stopColor="#3b82f6" />
+          <stop offset="100%" stopColor="#1e3a8a" />
         </linearGradient>
       </defs>
 
@@ -71,13 +71,13 @@ export default function EduLinkLogo({ size = 40, variant = 'full' }) {
         fontSize: size * 0.5,
         lineHeight: 1,
         letterSpacing: '-0.03em',
-        background: 'linear-gradient(135deg, #818cf8 0%, #4f46e5 100%)',
+        background: 'linear-gradient(135deg, #60a5fa 0%, #2563eb 100%)',
         WebkitBackgroundClip: 'text',
         WebkitTextFillColor: 'transparent',
         backgroundClip: 'text',
       }}>
         Edu<span style={{
-          background: 'linear-gradient(135deg, #6366f1 0%, #312e81 100%)',
+          background: 'linear-gradient(135deg, #3b82f6 0%, #1e3a8a 100%)',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
           backgroundClip: 'text',

@@ -23,26 +23,26 @@ const FEATURES = [
 /* ── STEPS ─────────────────────────────────────────────────────────────── */
 const STEPS = [
   { n: 1, title: 'Import Or Quick Setup',       desc: 'Upload students, teachers, and classes via Excel or fill in our guided setup wizard. Your school is live in minutes, not days.' },
-  { n: 2, title: 'Super-Exciting New Dashboard', desc: 'The EduLink dashboard puts every metric — attendance, fees, assessments — on a single screen updated in real time.' },
+  { n: 2, title: 'Super-Exciting New Dashboard', desc: 'The EduLink dashboard puts every metric: attendance, fees, and assessments on a single screen updated in real time.' },
   { n: 3, title: 'Get Your Best Reports',        desc: 'Generate CBC report cards, NEMIS exports, fee statements, and attendance summaries with a single click.' },
 ]
 
 /* ── ROLES ─────────────────────────────────────────────────────────────── */
 const ROLES = {
   Admin: {
-    headline: 'Admin — whole campus command center',
-    desc: 'Full visibility and control across every department — students, staff, curriculum, fees, analytics, and settings.',
+    headline: 'Admin: whole campus command center',
+    desc: 'Full visibility and control across every department: students, staff, curriculum, fees, analytics, and settings.',
     stats: [{ label: 'Total Students', val: '247' }, { label: 'Fee Collection', val: '94%' }],
     features: ['Manage students, teachers, classes, and parents', 'Set fee structures and generate M-Pesa invoices', 'Generate NEMIS exports for the Ministry', 'School-wide analytics and audit logs', 'Timetable builder and academic calendar'],
   },
   Teacher: {
-    headline: 'Teacher — everything to teach and report',
-    desc: 'Record CBC assessments, manage assignments, track competencies, and communicate with parents — all in one workflow.',
+    headline: 'Teacher: everything to teach and report',
+    desc: 'Record CBC assessments, manage assignments, track competencies, and communicate with parents. All in one workflow.',
     stats: [{ label: 'My Classes', val: '4' }, { label: 'Pending Reports', val: '12' }],
     features: ['Mark attendance per class or student', 'Record EE/ME/AE/BE strand scores', 'Create and grade assignments with feedback', 'Generate learner profiles per term', 'Submit TPAD performance appraisals'],
   },
   Student: {
-    headline: 'Student — always in the loop',
+    headline: 'Student: always in the loop',
     desc: 'View your assignments, competency progress, attendance record, and CBC report cards from any device.',
     stats: [{ label: 'Assignments Due', val: '3' }, { label: 'Attendance', val: '96%' }],
     features: ['Submit assignments via text or file upload', 'View EE/ME/AE/BE competency levels', 'Download personal CBC report cards', 'Track your attendance record by term', 'View class timetable'],
@@ -259,7 +259,7 @@ export default function Landing() {
                       <div className="flex items-end gap-0.5" style={{ height: 60 }}>
                         {[55,70,45,85,60,90,50,75,65,80,95,72].map((h, i) => (
                           <div key={i} className="flex-1 rounded-t"
-                            style={{ height: `${h}%`, background: i === 10 ? '#6366f1' : i % 3 === 0 ? '#c7d2fe' : '#e0e7ff' }} />
+                            style={{ height: `${h}%`, background: i === 10 ? '#2563eb' : i % 3 === 0 ? '#bfdbfe' : '#dbeafe' }} />
                         ))}
                       </div>
                       <div className="flex justify-between mt-1">
@@ -481,7 +481,7 @@ export default function Landing() {
       </section>
 
       {/* ══ STATS BAR ════════════════════════════════════════════════════ */}
-      <section className="py-14" style={{ background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e1b4b 100%)' }}>
+      <section className="py-14" style={{ background: 'linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 50%, #1e3a8a 100%)' }}>
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 text-center">
             {[
@@ -608,7 +608,7 @@ export default function Landing() {
       </section>
 
       {/* ══ FINAL CTA ════════════════════════════════════════════════════ */}
-      <section className="py-24 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%)' }}>
+      <section className="py-24 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #0f172a 100%)' }}>
         <div className="absolute inset-0 opacity-[0.04]"
           style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
         <div className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
