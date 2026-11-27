@@ -10,10 +10,12 @@ import { z } from "zod";
 export const validate = (schema) => (req, res, next) => {
   const result = schema.safeParse(req.body);
   if (!result.success) {
-    const message = result.error.errors[0]?.message ?? "Validation error";
+    // Zod uses .issues (not .errors) on the ZodError object
+    const issues = result.error?.issues ?? result.error?.errors ?? [];
+    const message = issues[0]?.message ?? "Validation error";
     return res.status(400).json({ success: false, message });
   }
-  req.body = result.data; // replace with coerced, stripped data
+  req.body = result.data;
   next();
 };
 
