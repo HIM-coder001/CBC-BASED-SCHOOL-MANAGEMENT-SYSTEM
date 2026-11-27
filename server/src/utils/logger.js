@@ -1,25 +1,36 @@
 import { createLogger, format, transports } from "winston";
 import { existsSync, mkdirSync } from "fs";
 
-// Ensure logs directory exists
 if (!existsSync("logs")) mkdirSync("logs");
+
+// Human-readable format for development: timestamp + level + message + any extra fields
+const devFormat = format.combine(
+  format.colorize(),
+  format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
+  format.printf(({ timestamp, level, message, ...meta }) => {
+    // When logging an object (e.g. logger.info({ method, url })), promote fields to message
+    const msg = message ?? JSON.stringify(meta);
+    const extra = message && Object.keys(meta).length
+      ? " " + JSON.stringify(meta)
+      : "";
+    return `${timestamp} ${level}: ${msg}${extra}`;
+  })
+);
+
+const prodFormat = format.combine(
+  format.timestamp(),
+  format.errors({ stack: true }),
+  format.json()
+);
 
 const logger = createLogger({
   level: process.env.LOG_LEVEL || "info",
-  format: format.combine(
-    format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
-    format.errors({ stack: true }),
-    format.json()
-  ),
+  format: prodFormat,
   transports: [
-    // Console — human-readable in dev, JSON in prod
     new transports.Console({
-      format: process.env.NODE_ENV === "production"
-        ? format.json()
-        : format.combine(format.colorize(), format.simple()),
+      format: process.env.NODE_ENV === "production" ? prodFormat : devFormat,
     }),
-    // File — always JSON
-    new transports.File({ filename: "logs/error.log",  level: "error" }),
+    new transports.File({ filename: "logs/error.log",   level: "error" }),
     new transports.File({ filename: "logs/combined.log" }),
   ],
 });

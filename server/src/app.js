@@ -65,7 +65,7 @@ app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 // Request logging
 app.use((req, _res, next) => {
-  logger.info({ method: req.method, url: req.url, ip: req.ip });
+  logger.info(`${req.method} ${req.url}`, { ip: req.ip });
   next();
 });
 
@@ -86,44 +86,51 @@ const apiLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-app.use("/api/auth/login", loginLimiter);
-app.use("/api", apiLimiter);
+app.use("/api/auth/login",    loginLimiter);
+app.use("/api/v1/auth/login", loginLimiter);
+app.use("/api",    apiLimiter);
+app.use("/api/v1", apiLimiter);
 
 // Health check
 app.get("/health", (_req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString(), uptime: process.uptime() });
 });
 
-// Routes
-app.use("/api/students",       studentRoutes);
-app.use("/api/classes",        classRoutes);
-app.use("/api/teachers",       teacherRoutes);
-app.use("/api/users",          userRoutes);
-app.use("/api/auth",           authRoutes);
-app.use("/api/assessments",    assessmentRoutes);
-app.use("/api/report-cards",   reportCardRoutes);
-app.use("/api/attendance",     attendanceRoutes);
-app.use("/api/assignments",    assignmentRoutes);
-app.use("/api/parents",        parentRoutes);
-app.use("/api/competencies",   competencyRoutes);
-app.use("/api/learner-profiles", learnerProfileRoutes);
-app.use("/api/export",         exportRoutes);
-app.use("/api/learning-areas", learningAreaRoutes);
-app.use("/api/fees",           feeRoutes);
-app.use("/api/messages",       messageRoutes);
-app.use("/api/settings",         settingsRoutes);
-app.use("/api/skill-assessments", skillAssessmentRoutes);
-app.use("/api/import",           importRoutes);
-app.use("/api/analytics",        analyticsRoutes);
-app.use("/api/academic",         academicRoutes);
-app.use("/api/timetable",        timetableRoutes);
-app.use("/api/transport",        transportRoutes);
-app.use("/api/discipline",       disciplineRoutes);
-app.use("/api/library",          libraryRoutes);
-app.use("/api/tpad",             tpadRoutes);
-app.use("/api/exams",            examRoutes);
-app.use("/api/nemis",            nemisRoutes);
-app.use("/api/schools",          schoolRoutes);
+// Routes — mounted under /api/v1  (legacy /api prefix still works via alias below)
+const v1 = express.Router();
+
+v1.use("/students",         studentRoutes);
+v1.use("/classes",          classRoutes);
+v1.use("/teachers",         teacherRoutes);
+v1.use("/users",            userRoutes);
+v1.use("/auth",             authRoutes);
+v1.use("/assessments",      assessmentRoutes);
+v1.use("/report-cards",     reportCardRoutes);
+v1.use("/attendance",       attendanceRoutes);
+v1.use("/assignments",      assignmentRoutes);
+v1.use("/parents",          parentRoutes);
+v1.use("/competencies",     competencyRoutes);
+v1.use("/learner-profiles", learnerProfileRoutes);
+v1.use("/export",           exportRoutes);
+v1.use("/learning-areas",   learningAreaRoutes);
+v1.use("/fees",             feeRoutes);
+v1.use("/messages",         messageRoutes);
+v1.use("/settings",         settingsRoutes);
+v1.use("/skill-assessments",skillAssessmentRoutes);
+v1.use("/import",           importRoutes);
+v1.use("/analytics",        analyticsRoutes);
+v1.use("/academic",         academicRoutes);
+v1.use("/timetable",        timetableRoutes);
+v1.use("/transport",        transportRoutes);
+v1.use("/discipline",       disciplineRoutes);
+v1.use("/library",          libraryRoutes);
+v1.use("/tpad",             tpadRoutes);
+v1.use("/exams",            examRoutes);
+v1.use("/nemis",            nemisRoutes);
+v1.use("/schools",          schoolRoutes);
+
+app.use("/api/v1", v1);
+app.use("/api",    v1); // backward-compatible alias
 
 // Global error handler
 app.use((err, req, res, _next) => {
