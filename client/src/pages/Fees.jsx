@@ -36,7 +36,8 @@ export default function Fees() {
   const [paymentForm, setPaymentForm]     = useState({ studentId: '', amount: '', method: 'CASH', mpesaRef: '', notes: '', term: '1', year: '2026' })
   const [selectedStudentId, setSelectedStudentId] = useState('')
   const [modalError, setModalError] = useState('')
-  const [saving, setSaving]         = useState(false)
+  const [saving, setSaving]                       = useState(false)
+  const [generatingInvoices, setGeneratingInvoices] = useState(false)
   const [defaulters, setDefaulters] = useState([])
 
   useEffect(() => { loadAll() }, [filterTerm, filterYear, filterGrade])
@@ -134,10 +135,27 @@ export default function Fees() {
             <Select label="Year" value={filterYear} onChange={e => setFilterYear(e.target.value)} options={YEARS} />
             <Select label="Grade (optional)" value={filterGrade} onChange={e => setFilterGrade(e.target.value)} options={GRADES} />
             <Button onClick={loadAll}>Refresh</Button>
-            <Button variant="secondary" onClick={async () => {
-              await feeAPI.generateInvoices({ term: filterTerm, year: Number(filterYear) })
-              loadAll()
-            }}>Generate invoices</Button>
+            <Button
+              variant="secondary"
+              disabled={generatingInvoices}
+              onClick={async () => {
+                setGeneratingInvoices(true)
+                setError('')
+                try {
+                  const res = await feeAPI.generateInvoices({ term: filterTerm, year: Number(filterYear) })
+                  const count = res.data.data?.created ?? 0
+                  await loadAll()
+                  setError('')
+                  alert(`${count} invoice${count !== 1 ? 's' : ''} generated successfully.`)
+                } catch (err) {
+                  setError(err.response?.data?.message ?? 'Failed to generate invoices. Make sure fee structures exist for this term and year.')
+                } finally {
+                  setGeneratingInvoices(false)
+                }
+              }}
+            >
+              {generatingInvoices ? 'Generating…' : 'Generate Invoices'}
+            </Button>
           </div>
         </Card>
 
